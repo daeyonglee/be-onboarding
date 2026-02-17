@@ -92,12 +92,21 @@ function App() {
       .catch(() => {
         setContentCache((prev) => ({
           ...prev,
-          [activeStep.file]: `문서를 불러오지 못했습니다.\n경로: ${activeStep.file}`,
+          [activeStep.file]: `# 문서를 불러오지 못했습니다.\n\n- 경로: ${activeStep.file}`,
         }));
       });
   }, [activeStep, contentCache]);
 
-  const currentContent = contentCache[activeStep.file] ?? '문서를 불러오는 중...';
+  const currentContent = contentCache[activeStep.file] ?? '# 문서를 불러오는 중...';
+
+  const renderedMarkdown = React.useMemo(() => {
+    if (!window.marked) {
+      return '<p>Markdown renderer(marked)를 찾을 수 없습니다.</p>';
+    }
+
+    window.marked.setOptions({ breaks: true, gfm: true });
+    return window.marked.parse(currentContent);
+  }, [currentContent]);
 
   return (
     <div className="app-shell">
@@ -106,8 +115,8 @@ function App() {
           <p className="eyebrow">StyleKorean Engineering Academy</p>
           <h1>Backend Onboarding Curriculum</h1>
           <p className="hero-copy">
-            각 챕터별 Theory · Practice · Assignment · Review 4단계를 웹에서 모두 탐색할 수
-            있도록 구성했습니다.
+            모든 md 문서를 단계별로 선택하고, 브라우저에서 Markdown 형식 그대로 렌더링해 볼 수
+            있습니다.
           </p>
         </div>
       </header>
@@ -154,7 +163,7 @@ function App() {
               <span>{activeStep.label}</span>
               <code>{activeStep.file}</code>
             </div>
-            <pre>{currentContent}</pre>
+            <div className="markdown-body" dangerouslySetInnerHTML={{ __html: renderedMarkdown }} />
           </article>
         </section>
       </main>
