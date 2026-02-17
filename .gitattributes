@@ -1,0 +1,9 @@
+# Keep onboarding curriculum/UI changes from this branch when merge conflicts happen.
+EDUCATION_PLAN.md merge=ours
+01-foundation/** merge=ours
+02-spring-boot/** merge=ours
+03-domain-architecture/** merge=ours
+04-quality-patterns/** merge=ours
+05-capstone/** merge=ours
+index.html merge=ours
+web/** merge=ours
