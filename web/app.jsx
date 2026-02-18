@@ -1,140 +1,170 @@
-const modules = [
+const learningTracks = [
   {
-    id: 'plan',
-    title: '전체 교육 로드맵',
-    subtitle: 'EDUCATION_PLAN.md 요약',
-    sections: [
-      {
-        heading: '목표',
-        bullets: [
-          '3년차 백엔드 개발자의 실무 설계/구현/품질 역량 강화',
-          'StyleKorean eCommerce 시나리오 중심 학습',
-          '이론 + 실습 + 과제 + 리뷰 + 회고의 반복 루프 운영',
-        ],
-      },
-      {
-        heading: 'Phase 구성',
-        bullets: [
-          'Phase 0: 킥오프 & 진단',
-          'Phase 1: 자료구조/알고리즘/Java',
-          'Phase 2: Spring Boot 실전',
-          'Phase 3: DDD + Hexagonal',
-          'Phase 4: Clean Architecture/Pattern/Clean Code',
-          'Phase 5: Capstone 프로젝트',
-        ],
-      },
-    ],
+    id: 'roadmap',
+    title: '교육 로드맵',
+    description: '전체 과정 운영 계획',
+    steps: [{ id: 'plan', label: 'Plan', file: 'EDUCATION_PLAN.md' }],
   },
   {
-    id: 'foundation',
+    id: 'phase1',
     title: 'Phase 1 Foundation',
-    subtitle: 'CS/Java 실무 기초',
-    sections: [
-      {
-        heading: '이론',
-        bullets: [
-          '자료구조 선택 기준(List/Set/Map/Queue/Heap)',
-          '알고리즘 프레임(BFS/DFS, Sliding Window, 복잡도)',
-          'Java 불변성, 동시성, 예외/로깅 원칙',
-        ],
-      },
-      {
-        heading: '실습/과제',
-        bullets: [
-          'Top-K 상품 랭킹',
-          '카테고리 트리 탐색',
-          '재고 이벤트 멱등 처리',
-        ],
-      },
+    description: '자료구조 · 알고리즘 · Java',
+    steps: [
+      { id: 'theory', label: 'Theory', file: '01-foundation/theory.md' },
+      { id: 'practice', label: 'Practice', file: '01-foundation/practice.md' },
+      { id: 'assignment', label: 'Assignment', file: '01-foundation/assignment.md' },
+      { id: 'review', label: 'Review', file: '01-foundation/review-checklist.md' },
     ],
   },
   {
-    id: 'spring-theory',
-    title: 'Phase 2 Spring Theory',
-    subtitle: '트랜잭션/JPA/운영 관점 API 설계',
-    sections: [
-      {
-        heading: '핵심 주제',
-        bullets: [
-          'Controller-Service-Domain-Infrastructure 경계',
-          '트랜잭션 경계와 보상 흐름',
-          'N+1, 페이징, 벌크 업데이트 실전 이슈',
-          '비즈니스 예외 vs 시스템 예외 분리',
-        ],
-      },
-      {
-        heading: 'StyleKorean 매핑',
-        bullets: [
-          '주문 생성 API: 쿠폰/재고/결제 처리',
-          '주문 조회 API: 연관 데이터 성능 최적화',
-          '쿠폰 정책 API: 조건 검증 표준화',
-        ],
-      },
+    id: 'phase2',
+    title: 'Phase 2 Spring Boot',
+    description: '트랜잭션 · JPA · 운영 API',
+    steps: [
+      { id: 'theory', label: 'Theory', file: '02-spring-boot/theory.md' },
+      { id: 'practice', label: 'Practice', file: '02-spring-boot/practice.md' },
+      { id: 'assignment', label: 'Assignment', file: '02-spring-boot/assignment.md' },
+      { id: 'review', label: 'Review', file: '02-spring-boot/review-checklist.md' },
     ],
   },
   {
-    id: 'spring-practice',
-    title: 'Phase 2 Practice & Assignment',
-    subtitle: '주문/결제 안정화 실습',
-    sections: [
-      {
-        heading: '핸즈온',
-        bullets: [
-          '주문 생성 트랜잭션 경계 설계',
-          '주문 조회 N+1 제거 전/후 비교',
-          '쿠폰 정책 검증 모듈 + 단위 테스트',
-        ],
-      },
-      {
-        heading: '과제 산출물',
-        bullets: [
-          '코드 + 테스트 리포트',
-          '성능 비교 문서(SQL 건수/응답시간)',
-          'ADR: 트랜잭션 경계 결정 근거',
-        ],
-      },
+    id: 'phase3',
+    title: 'Phase 3 DDD / Hexagonal',
+    description: '도메인 경계 · 포트/어댑터',
+    steps: [
+      { id: 'theory', label: 'Theory', file: '03-domain-architecture/theory.md' },
+      { id: 'practice', label: 'Practice', file: '03-domain-architecture/practice.md' },
+      { id: 'assignment', label: 'Assignment', file: '03-domain-architecture/assignment.md' },
+      { id: 'review', label: 'Review', file: '03-domain-architecture/review-checklist.md' },
+    ],
+  },
+  {
+    id: 'phase4',
+    title: 'Phase 4 Quality / Pattern',
+    description: '클린 아키텍처 · 패턴 · 리팩토링',
+    steps: [
+      { id: 'theory', label: 'Theory', file: '04-quality-patterns/theory.md' },
+      { id: 'practice', label: 'Practice', file: '04-quality-patterns/practice.md' },
+      { id: 'assignment', label: 'Assignment', file: '04-quality-patterns/assignment.md' },
+      { id: 'review', label: 'Review', file: '04-quality-patterns/review-checklist.md' },
+    ],
+  },
+  {
+    id: 'phase5',
+    title: 'Phase 5 Capstone',
+    description: '통합 프로젝트 · 발표 · 운영성 검증',
+    steps: [
+      { id: 'theory', label: 'Theory', file: '05-capstone/theory.md' },
+      { id: 'practice', label: 'Practice', file: '05-capstone/practice.md' },
+      { id: 'assignment', label: 'Assignment', file: '05-capstone/assignment.md' },
+      { id: 'review', label: 'Review', file: '05-capstone/review-checklist.md' },
     ],
   },
 ];
 
 function App() {
-  const [activeId, setActiveId] = React.useState(modules[0].id);
-  const active = modules.find((module) => module.id === activeId) ?? modules[0];
+  const [activeTrackId, setActiveTrackId] = React.useState(learningTracks[0].id);
+  const [activeStepId, setActiveStepId] = React.useState(learningTracks[0].steps[0].id);
+  const [contentCache, setContentCache] = React.useState({});
+
+  const activeTrack =
+    learningTracks.find((track) => track.id === activeTrackId) ?? learningTracks[0];
+  const activeStep =
+    activeTrack.steps.find((step) => step.id === activeStepId) ?? activeTrack.steps[0];
+
+  React.useEffect(() => {
+    setActiveStepId(activeTrack.steps[0].id);
+  }, [activeTrackId]);
+
+  React.useEffect(() => {
+    if (!activeStep?.file || contentCache[activeStep.file]) return;
+
+    fetch(activeStep.file)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to load ${activeStep.file}`);
+        }
+        return res.text();
+      })
+      .then((text) => {
+        setContentCache((prev) => ({ ...prev, [activeStep.file]: text }));
+      })
+      .catch(() => {
+        setContentCache((prev) => ({
+          ...prev,
+          [activeStep.file]: `# 문서를 불러오지 못했습니다.\n\n- 경로: ${activeStep.file}`,
+        }));
+      });
+  }, [activeStep, contentCache]);
+
+  const currentContent = contentCache[activeStep.file] ?? '# 문서를 불러오는 중...';
+
+  const renderedMarkdown = React.useMemo(() => {
+    if (!window.marked) {
+      return '<p>Markdown renderer(marked)를 찾을 수 없습니다.</p>';
+    }
+
+    window.marked.setOptions({ breaks: true, gfm: true });
+    return window.marked.parse(currentContent);
+  }, [currentContent]);
 
   return (
-    <div className="layout">
-      <header className="header">
-        <h1>StyleKorean Backend Onboarding</h1>
-        <p>eCommerce 실무 시나리오 기반 교육자료 포털 (React)</p>
+    <div className="app-shell">
+      <header className="hero">
+        <div>
+          <p className="eyebrow">StyleKorean Engineering Academy</p>
+          <h1>Backend Onboarding Curriculum</h1>
+          <p className="hero-copy">
+            모든 md 문서를 단계별로 선택하고, 브라우저에서 Markdown 형식 그대로 렌더링해 볼 수
+            있습니다.
+          </p>
+        </div>
       </header>
 
-      <main className="main">
-        <aside className="sidebar">
-          <h2>학습 모듈</h2>
-          {modules.map((module) => (
-            <button
-              key={module.id}
-              className={`nav-btn ${module.id === activeId ? 'active' : ''}`}
-              onClick={() => setActiveId(module.id)}
-            >
-              {module.title}
-            </button>
-          ))}
+      <main className="workspace">
+        <aside className="track-panel">
+          <h2>챕터</h2>
+          <div className="track-list">
+            {learningTracks.map((track) => (
+              <button
+                key={track.id}
+                className={`track-btn ${track.id === activeTrackId ? 'active' : ''}`}
+                onClick={() => setActiveTrackId(track.id)}
+              >
+                <strong>{track.title}</strong>
+                <span>{track.description}</span>
+                <em>{track.steps.length} Step{track.steps.length > 1 ? 's' : ''}</em>
+              </button>
+            ))}
+          </div>
         </aside>
 
-        <section className="content">
-          <h2>{active.title}</h2>
-          <p className="subtitle">{active.subtitle}</p>
-          {active.sections.map((section) => (
-            <article className="card" key={section.heading}>
-              <h3>{section.heading}</h3>
-              <ul>
-                {section.bullets.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
+        <section className="content-panel">
+          <div className="content-head">
+            <div>
+              <h2>{activeTrack.title}</h2>
+              <p>{activeTrack.description}</p>
+            </div>
+            <div className="step-pills">
+              {activeTrack.steps.map((step, idx) => (
+                <button
+                  key={step.id}
+                  className={`step-pill ${step.id === activeStep.id ? 'active' : ''}`}
+                  onClick={() => setActiveStepId(step.id)}
+                >
+                  {idx + 1}. {step.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <article className="doc-viewer">
+            <div className="doc-meta">
+              <span>{activeStep.label}</span>
+              <code>{activeStep.file}</code>
+            </div>
+            <div className="markdown-body" dangerouslySetInnerHTML={{ __html: renderedMarkdown }} />
+          </article>
         </section>
       </main>
     </div>
