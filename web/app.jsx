@@ -1,17 +1,18 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { marked } from 'marked';
+import './styles.css';
+
 const learningTracks = [
-  {
-    id: 'roadmap',
-    title: '교육 로드맵',
-    description: '전체 과정 운영 계획',
-    steps: [{ id: 'plan', label: 'Plan', file: 'EDUCATION_PLAN.md' }],
-  },
   {
     id: 'phase1',
     title: 'Phase 1 Foundation',
-    description: '자료구조 · 알고리즘 · Java',
+    description: '자료구조 · 알고리즘 · Java 기본기',
     steps: [
-      { id: 'theory', label: 'Theory', file: '01-foundation/theory.md' },
-      { id: 'practice', label: 'Practice', file: '01-foundation/practice.md' },
+      { id: 'overview', label: 'Overview', file: '01-foundation/overview.md' },
+      { id: 'data-structures', label: 'Data Structures', file: '01-foundation/data-structures.md' },
+      { id: 'algorithms', label: 'Algorithms', file: '01-foundation/algorithms.md' },
+      { id: 'java-core', label: 'Java Core', file: '01-foundation/java-core.md' },
       { id: 'assignment', label: 'Assignment', file: '01-foundation/assignment.md' },
       { id: 'review', label: 'Review', file: '01-foundation/review-checklist.md' },
     ],
@@ -79,7 +80,7 @@ function App() {
   React.useEffect(() => {
     if (!activeStep?.file || contentCache[activeStep.file]) return;
 
-    fetch(activeStep.file)
+    fetch(`/${activeStep.file}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`Failed to load ${activeStep.file}`);
@@ -100,12 +101,8 @@ function App() {
   const currentContent = contentCache[activeStep.file] ?? '# 문서를 불러오는 중...';
 
   const renderedMarkdown = React.useMemo(() => {
-    if (!window.marked) {
-      return '<p>Markdown renderer(marked)를 찾을 수 없습니다.</p>';
-    }
-
-    window.marked.setOptions({ breaks: true, gfm: true });
-    return window.marked.parse(currentContent);
+    marked.setOptions({ breaks: true, gfm: true });
+    return marked.parse(currentContent);
   }, [currentContent]);
 
   return (
@@ -115,8 +112,7 @@ function App() {
           <p className="eyebrow">StyleKorean Engineering Academy</p>
           <h1>Backend Onboarding Curriculum</h1>
           <p className="hero-copy">
-            모든 md 문서를 단계별로 선택하고, 브라우저에서 Markdown 형식 그대로 렌더링해 볼 수
-            있습니다.
+            챕터별 문서를 한 화면에서 읽고 학습할 수 있습니다.
           </p>
         </div>
       </header>
@@ -171,4 +167,8 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

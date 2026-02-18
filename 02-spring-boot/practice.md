@@ -1,48 +1,108 @@
-# Phase 2 Practice — Spring Boot 핸즈온 (상세)
+# Phase 2 Practice — Spring Boot 실습 가이드 (확장 버전)
 
-## 실습 1) 주문 생성 트랜잭션 경계 설계
-### 요구사항
-- API: `POST /api/orders`
-- 입력: 상품목록, 쿠폰코드, 결제수단
-- 처리:
-  1. coupon validate
-  2. stock check
-  3. order persist(PENDING)
-  4. payment request
-  5. state update(PAID/FAILED)
-
-### 산출물
-- 시퀀스 다이어그램 1장
-- 트랜잭션 경계 설명 1페이지
-
-### 테스트
-- 결제 성공
-- 결제 실패
-- 쿠폰 만료
-- 재고 부족
+## 실습 운영 기준
+- Java 17, Spring Boot 3.x
+- 테스트: JUnit 5 + Spring Boot Test
+- 목표: 기능 구현 + 성능/운영 관점 검증
 
 ---
 
-## 실습 2) 주문 조회 N+1 개선
-### 요구사항
-- API: `GET /api/orders`, `GET /api/orders/{id}`
-- 최초 구현: N+1 발생 버전
-- 개선 구현: fetch join/entity graph 적용
+## 실습 1) 주문 생성 API 기본 유스케이스
 
-### 측정 항목
-- SQL 실행 횟수
-- p95 응답 시간
-- 페이징 1/10/100페이지 비교
+### 구현 대상
+- `POST /api/orders`
+- 입력 검증, 쿠폰 검증, 재고 확인, 주문 생성
+
+### 요구사항
+- 성공: 201 + orderId
+- 실패: 공통 에러 포맷
+- 테스트: 성공/재고부족/쿠폰만료/입력오류
 
 ---
 
-## 실습 3) 쿠폰 정책 모듈화
-### 요구사항
-- 정책: 만료일, 최소금액, 회원등급, 채널 제한
-- 정책 충돌 시 우선순위 정의
-- Strategy 패턴 또는 Rule 객체로 확장 가능 구조
+## 실습 2) 트랜잭션 경계 분리
 
-### 테스트
-- 정책 단독 4개
-- 정책 조합 6개 이상
-- 실패 메시지 정합성 검증
+### 목표
+- 결제 외부 호출을 분리한 버전과 통합 버전 비교
+
+### 해야 할 일
+- `@Transactional` 범위 2가지 구현
+- 각 방식의 장단점을 `ADR-001.md`로 정리
+- 장애 상황(결제 timeout) 시 상태 일관성 확인
+
+---
+
+## 실습 3) N+1 재현 및 개선
+
+### 구현 대상
+- `GET /api/orders?userId={id}`
+- `GET /api/orders/{id}`
+
+### 요구사항
+- N+1 발생 버전 먼저 구현
+- fetch join 또는 EntityGraph로 개선
+- SQL 수/응답시간 비교표 작성
+
+---
+
+## 실습 4) 에러 표준 + GlobalExceptionHandler
+
+### 구현 대상
+- 에러 코드 규칙: `ORDER-xxx-yyy`
+- `@RestControllerAdvice` 기반 통합 처리
+
+### 필수 테스트
+- 400/404/409/500 응답 구조 검증
+- traceId 포함 여부 검증
+
+---
+
+## 실습 5) Idempotency Key 처리
+
+### 목표
+- 동일 요청 중복 호출 시 주문 중복 생성 방지
+
+### 요구사항
+- `Idempotency-Key` 헤더 저장/검증
+- 중복 호출 시 동일 결과 반환
+- 동시성 테스트 2개 이상
+
+---
+
+## 실습 6) 메트릭/로그 관측성
+
+### 구현 대상
+- 구조화 로그(JSON)
+- endpoint별 latency timer
+
+### 요구사항
+- 로그 필드 표준화: traceId, orderId, userId, status
+- p95 계산 기준 문서화
+
+---
+
+## 실습 7) 테스트 계층 분리
+
+### 목표
+- 단위/통합/API 테스트를 역할별로 분리
+
+### 요구사항
+- 단위 15개 이상
+- 통합 10개 이상
+- API 15개 이상
+- 총 테스트 40개 이상
+
+---
+
+## 실습 8) 성능 회고
+- 병목 3개 식별
+- 개선 우선순위 1~3위 제시
+- 다음 스프린트 액션 아이템 작성
+
+---
+
+## 제출물
+- `PRACTICE_RESULT.md`
+- `ADR-001.md`
+- `SQL_COMPARE.md`
+- 테스트 코드 + 실행 결과

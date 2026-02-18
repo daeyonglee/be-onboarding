@@ -181,9 +181,17 @@ body {
   line-height: 1.35;
 }
 
-.markdown-body h1 { font-size: 30px; }
-.markdown-body h2 { font-size: 24px; }
-.markdown-body h3 { font-size: 20px; }
+.markdown-body h1 {
+  font-size: 30px;
+}
+
+.markdown-body h2 {
+  font-size: 24px;
+}
+
+.markdown-body h3 {
+  font-size: 20px;
+}
 
 .markdown-body p {
   margin: 0 0 0.9em;

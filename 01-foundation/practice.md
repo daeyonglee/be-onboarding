@@ -1,90 +1,121 @@
-# Phase 1 Practice — 핸즈온 실습 (상세)
+# Phase 1 Practice — Java 실습 가이드 (확장 버전)
 
-## 실습 공통 조건
-- 언어: Java 17
-- 제출: `README + 코드 + 테스트 + 측정결과`
-- 테스트 최소 기준: 각 실습당 5개 이상(정상/경계/실패 포함)
+## 실습 운영 기준
+- JDK 17
+- 테스트: JUnit 5
+- 각 실습은 구현 + 테스트 + 성능/회고 기록까지 제출
+- 목표: "동작"이 아니라 "선택 근거"를 남기는 습관
 
 ---
 
-## 실습 1) Top-K 상품 랭킹
-### 목표
-대량 데이터(최대 100만 건)에서 Top-K를 안정적으로 계산한다.
+## 실습 1) 재고 조회 구조 비교 (List vs Map)
 
-### 입력 스펙
-```json
-{
-  "k": 100,
-  "items": [
-    {"productId": 101, "sales": 300, "views": 5000, "conversionRate": 0.12}
-  ]
+### 구현
+```java
+public class StockQueryService {
+    public int findWithList(List<StockItem> items, String sku) { /* TODO */ }
+    public int findWithMap(Map<String, Integer> stockMap, String sku) { /* TODO */ }
 }
 ```
 
-### 구현 요구사항
-1. `score = sales*0.6 + views*0.2 + conversionRate*1000*0.2`
-2. Min-Heap으로 K개 유지
-3. 동점 처리: `score DESC`, `productId ASC`
-
-### 테스트 케이스
-- k=1, k=n, k>n
-- 동점 다수
-- 빈 입력
-- 음수/이상치 데이터 필터링
-
-### 성능 목표
-- 100만 건 기준 2초 내(로컬 기준) 처리 시도
-- 전체 정렬 방식 대비 실행시간 비교표 작성
+### 요구사항
+- 10k / 100k 데이터셋에서 성능 비교
+- 예외 메시지에 sku 포함
+- 테스트 4개 이상
 
 ---
 
-## 실습 2) 카테고리 하위 트리 조회
-### 목표
-DFS/BFS를 모두 구현하고 요구사항별 적합성을 비교한다.
+## 실습 2) Top-K 랭킹 (Sort vs Heap)
 
-### 입력 예시
-```text
-1(Beauty)
- ├─ 2(Skincare)
- │   ├─ 4(Cream)
- │   └─ 5(Toner)
- └─ 3(Makeup)
-```
-
-### 구현 요구사항
-1. DFS(재귀 or 스택), BFS(큐) 모두 구현
-2. `collectDescendants(rootId)` 공통 인터페이스 제공
-3. 순환 참조 감지 시 `CycleDetectedException`
-
-### 테스트 케이스
-- 깊이 1 / 깊이 10+
-- 루트 없음
-- 사이클 존재(2->4->2)
-
----
-
-## 실습 3) 재고 이벤트 큐 소비자
-### 목표
-중복 이벤트/실패 재시도에서도 재고 정합성을 유지한다.
-
-### 이벤트 스펙
-```json
-{
-  "eventId": "evt-20260217-1001",
-  "type": "ORDER_CREATED",
-  "orderId": "ord-1001",
-  "sku": "SKU-AAA",
-  "qty": 2,
-  "occurredAt": "2026-02-17T09:00:00Z"
+### 구현
+```java
+public class RankingService {
+    public List<ProductScore> topKWithSort(List<ProductScore> items, int k) { /* TODO */ }
+    public List<ProductScore> topKWithHeap(List<ProductScore> items, int k) { /* TODO */ }
 }
 ```
 
-### 구현 요구사항
-1. `processed_event` 저장소로 멱등 처리
-2. 실패 시 지수 백오프(1s, 2s, 4s)
-3. 3회 실패 시 DLQ 전송
+### 요구사항
+- 동점 규칙: `score DESC`, `productId ASC`
+- `k <= 0`, `k > n` 처리
+- n=1,000,000 입력 시 복잡도 설명 작성
 
-### 검증 포인트
-- 동일 eventId 2회 입력 시 결과 동일
-- 재고 음수 방지
-- 로그 필수 필드: traceId/eventId/orderId/sku
+---
+
+## 실습 3) 카테고리 탐색 (DFS + BFS 둘 다)
+
+### 구현
+```java
+public class CategoryService {
+    public List<Long> descendantsDfs(long root, Map<Long, List<Long>> tree) { /* TODO */ }
+    public List<Long> descendantsBfs(long root, Map<Long, List<Long>> tree) { /* TODO */ }
+}
+```
+
+### 요구사항
+- root 미존재 예외
+- 사이클 검출
+- DFS/BFS 결과 차이와 장단점 정리
+
+---
+
+## 실습 4) 멱등 이벤트 처리
+
+### 구현
+```java
+public class StockEventConsumer {
+    public void consume(StockEvent event) { /* TODO */ }
+    public int getQty(String sku) { /* TODO */ }
+}
+```
+
+### 요구사항
+- 중복 eventId 무시
+- ORDER_CREATED / ORDER_CANCELLED 처리
+- 음수 재고 방지
+
+---
+
+## 실습 5) 재시도 + DLQ
+- 실패 재시도 3회
+- 3회 실패 후 DLQ publisher 호출
+- 테스트에서 retry 횟수 검증
+
+---
+
+## 실습 6) Sliding Window 집계
+
+### 구현 목표
+- 최근 5분 요청 수를 초 단위로 계산
+- naive 방식(전체 재계산) vs window 방식 비교
+
+### 제출
+- 두 방식 시간 비교표
+- 메모리 사용량 차이 간단 분석
+
+---
+
+## 실습 7) Binary Search 결정 문제
+
+### 문제 예시
+"처리량 X에서 p95 200ms 이하를 유지할 수 있는 최소 worker 수"를 찾는 함수 작성
+
+### 요구사항
+- 조건 함수 분리
+- 탐색 범위/종료조건 문서화
+
+---
+
+## 실습 8) Java 코드 품질 리팩토링
+- 긴 메서드 분해
+- 매직 넘버 상수화
+- 예외/로그 메시지 표준화
+
+---
+
+## 제출물
+- `practice-result.md`
+  - 각 실습 결과
+  - 측정값 표
+  - 실패 케이스와 수정 내역
+- 테스트 최소 30개
