@@ -3,6 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { marked } from 'marked';
 import './styles.css';
 
+const markdownLoaders = import.meta.glob(
+  '../{01-foundation,02-spring-boot,03-domain-architecture,04-quality-patterns,05-capstone}/*.md',
+  { query: '?raw', import: 'default' },
+);
+
 const learningTracks = [
   {
     id: 'phase1',
@@ -80,13 +85,16 @@ function App() {
   React.useEffect(() => {
     if (!activeStep?.file || contentCache[activeStep.file]) return;
 
-    fetch(`/${activeStep.file}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Failed to load ${activeStep.file}`);
-        }
-        return res.text();
-      })
+    const loader = markdownLoaders[`../${activeStep.file}`];
+    if (!loader) {
+      setContentCache((prev) => ({
+        ...prev,
+        [activeStep.file]: `# 문서를 찾을 수 없습니다.\n\n- 경로: ${activeStep.file}`,
+      }));
+      return;
+    }
+
+    loader()
       .then((text) => {
         setContentCache((prev) => ({ ...prev, [activeStep.file]: text }));
       })
